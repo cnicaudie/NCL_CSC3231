@@ -8,15 +8,7 @@ public class MeshGeneratorEditor : Editor
     {
         MeshGenerator meshGenerator = (MeshGenerator)target;
 
-        if (DrawDefaultInspector())
-        {
-            if (meshGenerator.liveEditorUpdate)
-            {
-                meshGenerator.GenerateAndDisplay();
-            }
-        }
-
-        if (GUILayout.Button("Generate Terrain"))
+        if ((DrawDefaultInspector() && meshGenerator.liveEditorUpdate) || GUILayout.Button("Generate Terrain"))
         {
             meshGenerator.GenerateAndDisplay();
         }

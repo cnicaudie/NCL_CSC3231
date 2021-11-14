@@ -8,6 +8,8 @@ public class MeshData
 
     int triangleIndex;
 
+    // ==================================
+
     public MeshData(int meshWidth, int meshHeight)
     {
         int nbVertices = meshWidth * meshHeight;

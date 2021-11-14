@@ -28,6 +28,8 @@ public class MeshGenerator : MonoBehaviour
     [Header("Editor Update")]
     public bool liveEditorUpdate;
 
+    // ==================================
+
     private void Start()
     {
         if (!m_meshFilter)
@@ -54,6 +56,9 @@ public class MeshGenerator : MonoBehaviour
         DrawMesh();
     }
 
+    /// <summary>
+    /// Creates the final mesh
+    /// </summary>
     private Mesh CreateMesh()
     {
         Mesh mesh = new Mesh();
@@ -67,6 +72,9 @@ public class MeshGenerator : MonoBehaviour
         return mesh;
     }
 
+    /// <summary>
+    /// Draws the final mesh
+    /// </summary>
     private void DrawMesh()
     {
         m_meshFilter.mesh = CreateMesh();
@@ -74,6 +82,9 @@ public class MeshGenerator : MonoBehaviour
         // TODO : update m_meshRenderer.material.mainTexture
     }
 
+    /// <summary>
+    /// Generates a randomized offset for each octaves
+    /// </summary>
     private Vector2[] GetOctaveOffsets()
     {
         const int randomMaxValue = 100000;
@@ -90,12 +101,16 @@ public class MeshGenerator : MonoBehaviour
         return octaveOffsets;
     }
 
+    /// <summary>
+    /// Generates a height value from perlin noise sample method
+    /// </summary>
     private float GetNoiseHeightSample(int x, int z, Vector2[] octaveOffsets)
     {
         float noiseHeight = 0f;
         float noiseFrequency = 1f;
         float noiseAmplitude = 1f;
 
+        // Compute the height and fine-tune it through each octaves
         for (int i = 0; i < octaves; i++)
         {
             float sampleX = x / noiseScale * noiseFrequency + octaveOffsets[i].x;
@@ -110,6 +125,7 @@ public class MeshGenerator : MonoBehaviour
             noiseFrequency *= lacunarity;
         }
 
+        // Compute min/max height of the current terrain
         if (noiseHeight > m_maxTerrainHeight)
         {
             m_maxTerrainHeight = noiseHeight;
@@ -122,6 +138,10 @@ public class MeshGenerator : MonoBehaviour
         return Mathf.InverseLerp(m_minTerrainHeight, m_maxTerrainHeight, noiseHeight);
     }
 
+    /// <summary>
+    /// Generates the terrain mesh by creating every triangle and assigning a height position
+    /// from the sampled height map (using noise)
+    /// </summary>
     private void GenerateTerrainMesh()
     {
         m_meshData = new MeshData(meshWidth, meshDepth);
@@ -134,12 +154,18 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int x = 0; x < meshWidth; x++)
             {
+                // Value between 0 and 1
                 float height = GetNoiseHeightSample(x, z, octaveOffsets);
 
-                m_meshData.vertices[vertexIndex] = new Vector3(x, heightCurve.Evaluate(height) * heightMultplier, z);
+                // The evaluate method from the animation curve allows to discard some heights
+                // and the multiplier emphasizes the height value
+                float finalHeight = heightCurve.Evaluate(height) * heightMultplier;
+
+                m_meshData.vertices[vertexIndex] = new Vector3(x, finalHeight, z);
 
                 if (x < (meshWidth - 1) && z < (meshDepth - 1))
                 {
+                    // Build a quad (= 2 triangles)
                     m_meshData.AddTriangle(vertexIndex + meshWidth, vertexIndex + meshWidth + 1, vertexIndex);
                     m_meshData.AddTriangle(vertexIndex + 1, vertexIndex, vertexIndex + meshWidth + 1);
                 }

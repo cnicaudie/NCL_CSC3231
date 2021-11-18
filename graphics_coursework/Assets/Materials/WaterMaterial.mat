@@ -42,10 +42,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _Depth: 1.93
-    - _Displacement: 3
+    - _Displacement: 2
     - _NormalStrenght: 0.25
-    - _Smoothness: 0.65
-    - _Strenght: 0.31
+    - _Smoothness: 0.47
+    - _Strenght: 0.75
     m_Colors:
     - ShallowWaterColor: {r: 0.3915094, g: 0.94023764, b: 1, a: 0.62352943}
     - _DeepWaterColor: {r: 0.11974903, g: 0.58418137, b: 0.6509434, a: 0.99215686}

@@ -1,10 +1,10 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
+// TODO : Rename as TerrainGenerator
 public class MeshGenerator : MonoBehaviour
 {
-    [SerializeField]
-    private MeshFilter m_meshFilter;
+    [SerializeField] private MeshFilter m_meshFilter;
     // TODO : [SerializeField] private MeshRenderer m_meshRenderer;
     private MeshData m_meshData;
 
@@ -13,6 +13,8 @@ public class MeshGenerator : MonoBehaviour
 
     public int meshWidth;
     public int meshDepth;
+
+    public Gradient colorGradient;
 
     [Header("Noise Settings")]
     public float noiseScale;
@@ -99,8 +101,8 @@ public class MeshGenerator : MonoBehaviour
 
         mesh.SetVertices(m_meshData.vertices);
         mesh.SetTriangles(m_meshData.triangles, 0);
-        // TODO : mesh.uv = m_meshData.uvs;
-
+        mesh.SetColors(m_meshData.colors);
+        
         mesh.RecalculateNormals();
 
         return mesh;
@@ -136,6 +138,7 @@ public class MeshGenerator : MonoBehaviour
                 float finalHeight = heightCurve.Evaluate(height) * heightMultplier;
 
                 m_meshData.vertices[vertexIndex] = new Vector3(x, finalHeight, z);
+                m_meshData.colors[vertexIndex] = colorGradient.Evaluate(height);
 
                 if (x < (meshWidth - 1) && z < (meshDepth - 1))
                 {

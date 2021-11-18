@@ -4,7 +4,7 @@ public class MeshData
 {
     public Vector3[] vertices;
     public int[] triangles;
-    // TODO : public Vector2[] uvs;
+    public Color[] colors;
 
     int triangleIndex;
 
@@ -17,6 +17,7 @@ public class MeshData
 
         vertices = new Vector3[nbVertices];
         triangles = new int[nbTriangleIndices];
+        colors = new Color[nbVertices];
         triangleIndex = 0;
     }
 

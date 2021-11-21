@@ -2,14 +2,14 @@ using UnityEngine;
 
 [ExecuteAlways]
 [RequireComponent(typeof(Light))]
-public class Sun : MonoBehaviour
+public class LightManager : MonoBehaviour
 {
     public Gradient ambientColor;
     public Gradient lightColor;
     public Gradient fogColor;
     public AnimationCurve intensityCurve;
 
-    private Light m_directionalLight;
+    private Light m_sunLight;
 
     private const float k_maxIntensity = 0.7f;
     private const float k_maxHoursInDay = 24f;
@@ -20,7 +20,7 @@ public class Sun : MonoBehaviour
 
     private void Start()
     {
-        m_directionalLight = GetComponent<Light>();
+        m_sunLight = GetComponent<Light>();
     }
 
     private void Update()
@@ -39,19 +39,19 @@ public class Sun : MonoBehaviour
         RenderSettings.ambientLight = ambientColor.Evaluate(timePercent);
         RenderSettings.fogColor = fogColor.Evaluate(timePercent);
 
-        m_directionalLight.color = lightColor.Evaluate(timePercent);
-        m_directionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
-        m_directionalLight.intensity = intensityCurve.Evaluate(timePercent) * k_maxIntensity;
+        m_sunLight.color = lightColor.Evaluate(timePercent);
+        m_sunLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
+        m_sunLight.intensity = intensityCurve.Evaluate(timePercent) * k_maxIntensity;
     }
 
     private void OnValidate()
     {
-        if (m_directionalLight != null)
+        if (m_sunLight != null)
             return;
 
         if (RenderSettings.sun != null)
         {
-            m_directionalLight = RenderSettings.sun;
+            m_sunLight = RenderSettings.sun;
         }
         else
         {

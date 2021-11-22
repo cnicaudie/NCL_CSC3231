@@ -1,11 +1,10 @@
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter))]
-// TODO : Rename as TerrainGenerator
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MeshGenerator : MonoBehaviour
 {
     [SerializeField] private MeshFilter m_meshFilter;
-    // TODO : [SerializeField] private MeshRenderer m_meshRenderer;
+
     private MeshData m_meshData;
 
     private float m_maxTerrainHeight;
@@ -60,6 +59,11 @@ public class MeshGenerator : MonoBehaviour
         DrawMesh();
     }
 
+    public MeshData GetMeshData()
+    {
+        return m_meshData;
+    }
+
     // ==================================
     // PRIVATE METHODS
     // ==================================
@@ -71,10 +75,8 @@ public class MeshGenerator : MonoBehaviour
             m_meshFilter = GetComponent<MeshFilter>();
         }
 
-        // TODO : m_meshRenderer = GetComponent<MeshRenderer>();
-
-        GenerateFalloffMap();
-        GenerateAndDisplay();
+        //GenerateFalloffMap();
+        //GenerateAndDisplay();
     }
 
     private void OnValidate()
@@ -88,8 +90,6 @@ public class MeshGenerator : MonoBehaviour
     private void DrawMesh()
     {
         m_meshFilter.mesh = CreateMesh();
-
-        // TODO : update m_meshRenderer.material.mainTexture
     }
 
     /// <summary>
@@ -135,8 +135,8 @@ public class MeshGenerator : MonoBehaviour
 
                 // The evaluate method from the animation curve allows to discard some heights
                 // and the multiplier emphasizes the height value
-                float finalHeight = heightCurve.Evaluate(height) * heightMultplier;
-
+                float finalHeight = GetScaledHeight(height);
+                
                 m_meshData.vertices[vertexIndex] = new Vector3(x, finalHeight, z);
                 m_meshData.colors[vertexIndex] = colorGradient.Evaluate(height);
 
@@ -206,6 +206,11 @@ public class MeshGenerator : MonoBehaviour
         }
 
         return Mathf.InverseLerp(m_minTerrainHeight, m_maxTerrainHeight, noiseHeight);
+    }
+
+    private float GetScaledHeight(float normalizedHeight)
+    {
+        return heightCurve.Evaluate(normalizedHeight) * heightMultplier;
     }
 
     /// <summary>

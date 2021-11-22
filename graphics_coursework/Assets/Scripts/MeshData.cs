@@ -4,6 +4,7 @@ public class MeshData
 {
     public Vector3[] vertices;
     public int[] triangles;
+    public Vector2[] uvs;
     public Color[] colors;
 
     public int meshWidth;
@@ -20,6 +21,7 @@ public class MeshData
 
         vertices = new Vector3[nbVertices];
         triangles = new int[nbTriangleIndices];
+        uvs = new Vector2[nbVertices];
         colors = new Color[nbVertices];
 
         this.meshWidth = meshWidth;

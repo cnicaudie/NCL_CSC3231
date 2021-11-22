@@ -36,6 +36,10 @@ public class MeshGenerator : MonoBehaviour
     public float falloffOffset;
     private float[,] m_falloffMap;
 
+    [Header("Texture Settings")]
+    [Range(1f, 200f)]
+    public float textureScale;
+
     [Header("Editor Update")]
     public bool liveEditorUpdate;
 
@@ -101,6 +105,7 @@ public class MeshGenerator : MonoBehaviour
 
         mesh.SetVertices(m_meshData.vertices);
         mesh.SetTriangles(m_meshData.triangles, 0);
+        mesh.SetUVs(0, m_meshData.uvs); // /!\ important for texturing
         mesh.SetColors(m_meshData.colors);
         
         mesh.RecalculateNormals();
@@ -138,6 +143,7 @@ public class MeshGenerator : MonoBehaviour
                 float finalHeight = GetScaledHeight(height);
                 
                 m_meshData.vertices[vertexIndex] = new Vector3(x, finalHeight, z);
+                m_meshData.uvs[vertexIndex] = new Vector2((float)textureScale * x / meshWidth, (float)textureScale * z / meshDepth);
                 m_meshData.colors[vertexIndex] = colorGradient.Evaluate(height);
 
                 if (x < (meshWidth - 1) && z < (meshDepth - 1))

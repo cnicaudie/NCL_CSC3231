@@ -4,6 +4,7 @@ using UnityEngine;
 public class MeshGenerator : MonoBehaviour
 {
     [SerializeField] private MeshFilter m_meshFilter;
+    [SerializeField] private MeshCollider m_meshCollider;
 
     private MeshData m_meshData;
 
@@ -16,6 +17,7 @@ public class MeshGenerator : MonoBehaviour
     public Gradient colorGradient;
 
     [Header("Noise Settings")]
+    [Range(1f, 300f)]
     public float noiseScale;
     public Vector2 noiseOffset;
     public float heightMultplier; 
@@ -51,9 +53,9 @@ public class MeshGenerator : MonoBehaviour
 
     public void GenerateAndDisplay()
     {
-        if (noiseScale <= 0f)
+        if (m_falloffMap == null)
         {
-            noiseScale = 0.0001f;
+            GenerateFalloffMap();
         }
 
         m_maxTerrainHeight = float.MinValue;
@@ -74,18 +76,30 @@ public class MeshGenerator : MonoBehaviour
 
     private void Start()
     {
+        InitMeshComponents();
+    }
+
+    private void InitMeshComponents()
+    {
         if (!m_meshFilter)
         {
             m_meshFilter = GetComponent<MeshFilter>();
         }
 
-        //GenerateFalloffMap();
-        //GenerateAndDisplay();
+        if (!m_meshCollider)
+        {
+            m_meshCollider = gameObject.AddComponent<MeshCollider>();
+        }
     }
 
     private void OnValidate()
     {
-        GenerateFalloffMap();
+        InitMeshComponents();
+
+        if (m_falloffMap == null)
+        {
+            GenerateFalloffMap();
+        }
     }
 
     /// <summary>
@@ -93,7 +107,9 @@ public class MeshGenerator : MonoBehaviour
     /// </summary>
     private void DrawMesh()
     {
-        m_meshFilter.mesh = CreateMesh();
+        Mesh mesh = CreateMesh();
+        m_meshFilter.mesh = mesh;        
+        m_meshCollider.sharedMesh = mesh;
     }
 
     /// <summary>

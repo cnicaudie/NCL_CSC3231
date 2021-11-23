@@ -8,6 +8,8 @@ public class MapGenerator : MonoBehaviour
     private void Start()
     {
         m_meshGenerator.GenerateAndDisplay();
+
+        // TODO : Fetch all object generators and loop through all of them
         m_grassGenerator.Generate(m_meshGenerator);
     }
 }

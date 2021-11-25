@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ObjectGenerator : MonoBehaviour
 {
-    [SerializeField] private GameObject m_object;
+    [SerializeField] private List<GameObject> m_objects;
     
     [Range(1f, 10f)]
     public float radius = 5f;
@@ -24,15 +24,23 @@ public class ObjectGenerator : MonoBehaviour
     // PUBLIC METHODS
     // ==================================
 
+    private void Start()
+    {
+        foreach (GameObject go in m_objects)
+        {
+            go.SetActive(false);
+        }
+    }
+
     /// <summary>
     /// Spawns objects on the mesh based on various parameters
     /// and some randomized variables
     /// </summary>
     public void Generate(MeshGenerator meshGenerator)
     {
-        if (m_object == null)
+        if (m_objects == null)
         {
-            Debug.LogWarning("Object to spawn hasn't been defined - " + gameObject.name);
+            Debug.LogWarning("Objects to spawn hasn't been defined - " + gameObject.name);
             return;
         }
 
@@ -44,6 +52,9 @@ public class ObjectGenerator : MonoBehaviour
 
         foreach (Vector2 position in positions)
         {
+            int randomIndex = Random.Range(0, m_objects.Count);
+            GameObject objectToSpawn = m_objects[randomIndex];
+
             Vector3 randomOffset = new Vector3(Random.Range(-1.75f, 1.75f), 0f, Random.Range(-1.75f, 1.75f));
             Vector3 origin = new Vector3(position.x, 200f, position.y) + randomOffset;
 
@@ -62,7 +73,7 @@ public class ObjectGenerator : MonoBehaviour
                 if (newPosition.y > m_minHeight && Mathf.Abs(slopeAngle) <= maxAngle)
                 {
                     // Instantiate object and position it
-                    GameObject go = Instantiate(m_object, transform);
+                    GameObject go = Instantiate(objectToSpawn, transform);
                     go.transform.position = newPosition;
 
                     // Rotate the element so that it lies correctly on the surface
@@ -74,6 +85,8 @@ public class ObjectGenerator : MonoBehaviour
                     
                     go.transform.up += randomRotation;
                     go.transform.localScale *= randomScaleMultiplier;
+
+                    go.SetActive(true);
                 }
             }
         }

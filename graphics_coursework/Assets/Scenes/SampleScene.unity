@@ -780,10 +780,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_grassObject: {fileID: 1894648203}
-  radius: 1.3
-  numSamplesBeforeRejection: 356
-  m_minHeight: 20
-  maxAngle: 30
+  radius: 1.2
+  numSamplesBeforeRejection: 150
+  m_minHeight: 18
+  maxAngle: 25
   displayGizmos: 0
 --- !u!4 &1037708736
 Transform:

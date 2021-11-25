@@ -31,9 +31,8 @@ public class GrassGenerator : MonoBehaviour
 
         foreach (Vector2 position in positions)
         {
-            // TODO : Apply a randomized offset
-
-            Vector3 origin = new Vector3(position.x, 200f, position.y);
+            Vector3 randomOffset = new Vector3(Random.Range(-1.75f, 1.75f), 0f, Random.Range(-1.75f, 1.75f));
+            Vector3 origin = new Vector3(position.x, 200f, position.y) + randomOffset;
             Ray ray = new Ray(origin, Vector3.down);
             RaycastHit hitInfo;
 
@@ -48,14 +47,21 @@ public class GrassGenerator : MonoBehaviour
                 // Filter out position below minimum height / slope angle
                 if (newPosition.y > m_minHeight && Mathf.Abs(slopeAngle) <= maxAngle)
                 {
-                    // TODO : Apply a randomized Y rotation
-
-                    // TODO : Apply a randomized scale
+                    Vector3 randomRotation = new Vector3(0f, Random.Range(0f, 360f), 0f);
+                    float randomScaleMultiplier = Random.Range(0.75f, 1.25f);
                     
-                    // Create GameObject and apply everything
+                    // Create GameObject
                     GameObject grassChunk = Instantiate(m_grassObject, transform);
+
+                    // Apply position
                     grassChunk.transform.position = newPosition;
+
+                    // Rotate the element so that it lies correctly on the surface
                     grassChunk.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitNormal);
+
+                    // Apply random upward rotation and scale
+                    grassChunk.transform.up += randomRotation;
+                    grassChunk.transform.localScale *= randomScaleMultiplier;
                 }
             }
         }

@@ -1,11 +1,11 @@
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter))]
-// TODO : Rename as TerrainGenerator
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MeshGenerator : MonoBehaviour
 {
     [SerializeField] private MeshFilter m_meshFilter;
-    // TODO : [SerializeField] private MeshRenderer m_meshRenderer;
+    [SerializeField] private MeshCollider m_meshCollider;
+
     private MeshData m_meshData;
 
     private float m_maxTerrainHeight;
@@ -17,6 +17,7 @@ public class MeshGenerator : MonoBehaviour
     public Gradient colorGradient;
 
     [Header("Noise Settings")]
+    [Range(1f, 300f)]
     public float noiseScale;
     public Vector2 noiseOffset;
     public float heightMultplier; 
@@ -37,6 +38,10 @@ public class MeshGenerator : MonoBehaviour
     public float falloffOffset;
     private float[,] m_falloffMap;
 
+    [Header("Texture Settings")]
+    [Range(1f, 200f)]
+    public float textureScale;
+
     [Header("Editor Update")]
     public bool liveEditorUpdate;
 
@@ -48,9 +53,9 @@ public class MeshGenerator : MonoBehaviour
 
     public void GenerateAndDisplay()
     {
-        if (noiseScale <= 0f)
+        if (m_falloffMap == null)
         {
-            noiseScale = 0.0001f;
+            GenerateFalloffMap();
         }
 
         m_maxTerrainHeight = float.MinValue;
@@ -60,26 +65,41 @@ public class MeshGenerator : MonoBehaviour
         DrawMesh();
     }
 
+    public MeshData GetMeshData()
+    {
+        return m_meshData;
+    }
+
     // ==================================
     // PRIVATE METHODS
     // ==================================
 
     private void Start()
     {
+        InitMeshComponents();
+    }
+
+    private void InitMeshComponents()
+    {
         if (!m_meshFilter)
         {
             m_meshFilter = GetComponent<MeshFilter>();
         }
 
-        // TODO : m_meshRenderer = GetComponent<MeshRenderer>();
-
-        GenerateFalloffMap();
-        GenerateAndDisplay();
+        if (!m_meshCollider)
+        {
+            m_meshCollider = gameObject.AddComponent<MeshCollider>();
+        }
     }
 
     private void OnValidate()
     {
-        GenerateFalloffMap();
+        InitMeshComponents();
+
+        if (m_falloffMap == null)
+        {
+            GenerateFalloffMap();
+        }
     }
 
     /// <summary>
@@ -87,9 +107,9 @@ public class MeshGenerator : MonoBehaviour
     /// </summary>
     private void DrawMesh()
     {
-        m_meshFilter.mesh = CreateMesh();
-
-        // TODO : update m_meshRenderer.material.mainTexture
+        Mesh mesh = CreateMesh();
+        m_meshFilter.mesh = mesh;        
+        m_meshCollider.sharedMesh = mesh;
     }
 
     /// <summary>
@@ -101,6 +121,7 @@ public class MeshGenerator : MonoBehaviour
 
         mesh.SetVertices(m_meshData.vertices);
         mesh.SetTriangles(m_meshData.triangles, 0);
+        mesh.SetUVs(0, m_meshData.uvs); // /!\ important for texturing
         mesh.SetColors(m_meshData.colors);
         
         mesh.RecalculateNormals();
@@ -135,9 +156,10 @@ public class MeshGenerator : MonoBehaviour
 
                 // The evaluate method from the animation curve allows to discard some heights
                 // and the multiplier emphasizes the height value
-                float finalHeight = heightCurve.Evaluate(height) * heightMultplier;
-
+                float finalHeight = GetScaledHeight(height);
+                
                 m_meshData.vertices[vertexIndex] = new Vector3(x, finalHeight, z);
+                m_meshData.uvs[vertexIndex] = new Vector2((float)textureScale * x / meshWidth, (float)textureScale * z / meshDepth);
                 m_meshData.colors[vertexIndex] = colorGradient.Evaluate(height);
 
                 if (x < (meshWidth - 1) && z < (meshDepth - 1))
@@ -206,6 +228,11 @@ public class MeshGenerator : MonoBehaviour
         }
 
         return Mathf.InverseLerp(m_minTerrainHeight, m_maxTerrainHeight, noiseHeight);
+    }
+
+    private float GetScaledHeight(float normalizedHeight)
+    {
+        return heightCurve.Evaluate(normalizedHeight) * heightMultplier;
     }
 
     /// <summary>

@@ -4,20 +4,29 @@ public class MeshData
 {
     public Vector3[] vertices;
     public int[] triangles;
+    public Vector2[] uvs;
     public Color[] colors;
 
-    int triangleIndex;
+    public int meshWidth;
+    public int meshDepth;
+
+    private int triangleIndex;
 
     // ==================================
 
-    public MeshData(int meshWidth, int meshHeight)
+    public MeshData(int meshWidth, int meshDepth)
     {
-        int nbVertices = meshWidth * meshHeight;
-        int nbTriangleIndices = (meshWidth - 1) * (meshHeight - 1) * 6;
+        int nbVertices = meshWidth * meshDepth;
+        int nbTriangleIndices = (meshWidth - 1) * (meshDepth - 1) * 6;
 
         vertices = new Vector3[nbVertices];
         triangles = new int[nbTriangleIndices];
+        uvs = new Vector2[nbVertices];
         colors = new Color[nbVertices];
+
+        this.meshWidth = meshWidth;
+        this.meshDepth = meshDepth;
+
         triangleIndex = 0;
     }
 

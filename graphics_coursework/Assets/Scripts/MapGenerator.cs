@@ -3,13 +3,23 @@
 public class MapGenerator : MonoBehaviour
 {
     [SerializeField] private MeshGenerator m_meshGenerator;
-    [SerializeField] private GrassGenerator m_grassGenerator;
+    [SerializeField] private ObjectGenerator[] m_objectGenerators;
+
+    // ==================================
+
+    // ==================================
+    // PRIVATE METHODS
+    // ==================================
 
     private void Start()
     {
         m_meshGenerator.GenerateAndDisplay();
 
-        // TODO : Fetch all object generators and loop through all of them
-        m_grassGenerator.Generate(m_meshGenerator);
+        m_objectGenerators = FindObjectsOfType<ObjectGenerator>();
+
+        foreach (ObjectGenerator objectGenerator in m_objectGenerators)
+        {
+            objectGenerator.Generate(m_meshGenerator);
+        }
     }
 }

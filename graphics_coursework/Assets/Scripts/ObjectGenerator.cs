@@ -1,31 +1,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class GrassGenerator : MonoBehaviour
+public class ObjectGenerator : MonoBehaviour
 {
-    // TODO : Generalize the generator to work with other object types
+    [SerializeField] private GameObject m_object;
     
-    [SerializeField] private GameObject m_grassObject;
-
     [Range(1f, 10f)]
     public float radius = 5f;
-    public int numSamplesBeforeRejection = 300;
-
+    
     [SerializeField] private float m_minHeight = 13f;
     [Range(0f, 180f)]
     public float maxAngle = 45f;
 
     // TODO Remove debug tools later
     public bool displayGizmos = false;
-    private List<Vector2> m_grassChunksPositions;
-    private bool m_positionGenerated = false;
+    public Color debugColor = Color.green;
+    private List<Vector2> m_generatedDebugPositions;
+    private bool m_debugPositionGenerated = false;
 
+    // ==================================
+
+    // ==================================
+    // PUBLIC METHODS
+    // ==================================
+
+    /// <summary>
+    /// Spawns objects on the mesh based on various parameters
+    /// and some randomized variables
+    /// </summary>
     public void Generate(MeshGenerator meshGenerator)
     {
+        if (m_object == null)
+        {
+            Debug.LogWarning("Object to spawn hasn't been defined - " + gameObject.name);
+            return;
+        }
+
         MeshData meshData = meshGenerator.GetMeshData();
 
-        List<Vector2> positions = GeneratePositionList(new Vector2(meshData.meshWidth * 10f, meshData.meshDepth * 10f));
+        List<Vector2> positions = GenerateSpawnPositionsList(new Vector2(meshData.meshWidth * 10f, meshData.meshDepth * 10f));
 
         int layerMask = ~LayerMask.NameToLayer("Terrain");
 
@@ -33,6 +46,7 @@ public class GrassGenerator : MonoBehaviour
         {
             Vector3 randomOffset = new Vector3(Random.Range(-1.75f, 1.75f), 0f, Random.Range(-1.75f, 1.75f));
             Vector3 origin = new Vector3(position.x, 200f, position.y) + randomOffset;
+
             Ray ray = new Ray(origin, Vector3.down);
             RaycastHit hitInfo;
 
@@ -47,27 +61,34 @@ public class GrassGenerator : MonoBehaviour
                 // Filter out position below minimum height / slope angle
                 if (newPosition.y > m_minHeight && Mathf.Abs(slopeAngle) <= maxAngle)
                 {
+                    // Instantiate object and position it
+                    GameObject go = Instantiate(m_object, transform);
+                    go.transform.position = newPosition;
+
+                    // Rotate the element so that it lies correctly on the surface
+                    go.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitNormal);
+
+                    // Apply random upward rotation and scale
                     Vector3 randomRotation = new Vector3(0f, Random.Range(0f, 360f), 0f);
                     float randomScaleMultiplier = Random.Range(0.75f, 1.25f);
                     
-                    // Create GameObject
-                    GameObject grassChunk = Instantiate(m_grassObject, transform);
-
-                    // Apply position
-                    grassChunk.transform.position = newPosition;
-
-                    // Rotate the element so that it lies correctly on the surface
-                    grassChunk.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitNormal);
-
-                    // Apply random upward rotation and scale
-                    grassChunk.transform.up += randomRotation;
-                    grassChunk.transform.localScale *= randomScaleMultiplier;
+                    go.transform.up += randomRotation;
+                    go.transform.localScale *= randomScaleMultiplier;
                 }
             }
         }
     }
 
-    public List<Vector2> GeneratePositionList(Vector2 sampleRegionSize)
+    // ==================================
+    // PRIVATE METHODS
+    // ==================================
+
+
+    /// <summary>
+    /// Generates a list of XZ positions whithin a region size
+    /// using the Poisson Disc algorithm
+    /// </summary>
+    private List<Vector2> GenerateSpawnPositionsList(Vector2 sampleRegionSize)
     {
         float cellSize = radius / Mathf.Sqrt(2);
         int numSamplesBeforeRejection = 20;
@@ -83,7 +104,7 @@ public class GrassGenerator : MonoBehaviour
         {
             int spawnIndex = Random.Range(0, spawnPoints.Count);
             Vector2 spawnCentre = spawnPoints[spawnIndex];
-            bool candidateAccepted = false;
+            bool wasCandidateAccepted = false;
 
             for (int i = 0; i < numSamplesBeforeRejection; i++)
             {
@@ -96,27 +117,33 @@ public class GrassGenerator : MonoBehaviour
                     points.Add(candidate);
                     spawnPoints.Add(candidate);
                     grid[(int)(candidate.x / cellSize), (int)(candidate.y / cellSize)] = points.Count;
-                    candidateAccepted = true;
+                    wasCandidateAccepted = true;
                     break;
                 }
             }
 
-            if (!candidateAccepted)
+            if (!wasCandidateAccepted)
             {
                 spawnPoints.RemoveAt(spawnIndex);
             }
-
         }
 
         return points;
     }
 
+
+    /// <summary>
+    /// Checks if candidate point is whithin the bounds of the sample region
+    /// and check that it isn't inside of another point's radius
+    /// </summary>
     private bool IsPositionValid(Vector2 candidate, Vector2 sampleRegionSize, float cellSize, List<Vector2> points, int[,] grid)
     {
-        if (candidate.x >= 0 && candidate.x < sampleRegionSize.x && candidate.y >= 0 && candidate.y < sampleRegionSize.y)
+        if (candidate.x >= 0 && candidate.x < sampleRegionSize.x
+            && candidate.y >= 0 && candidate.y < sampleRegionSize.y)
         {
             int cellX = (int)(candidate.x / cellSize);
             int cellY = (int)(candidate.y / cellSize);
+
             int searchStartX = Mathf.Max(0, cellX - 2);
             int searchEndX = Mathf.Min(cellX + 2, grid.GetLength(0) - 1);
             int searchStartY = Mathf.Max(0, cellY - 2);
@@ -147,7 +174,6 @@ public class GrassGenerator : MonoBehaviour
     }
 
     // TODO : Remove debug tools later
-
     private void GeneratePositions()
     {
         MeshGenerator meshGenerator = FindObjectOfType<MeshGenerator>();
@@ -162,12 +188,10 @@ public class GrassGenerator : MonoBehaviour
                 meshData = meshGenerator.GetMeshData();
             }
 
-            m_grassChunksPositions = GeneratePositionList(new Vector2(meshData.meshWidth * 10f, meshData.meshDepth * 10f));
+            m_generatedDebugPositions = GenerateSpawnPositionsList(new Vector2(meshData.meshWidth * 10f, meshData.meshDepth * 10f));
         }
 
-        m_positionGenerated = true;
-
-        Debug.Log("Generated Positions !");
+        m_debugPositionGenerated = true;
     }
 
     private void OnValidate()
@@ -178,33 +202,41 @@ public class GrassGenerator : MonoBehaviour
         }
     }
 
+    private void DrawPointGizmos(Vector3 position)
+    {
+        Gizmos.color = debugColor;
+        Gizmos.DrawSphere(position, 1f);
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (displayGizmos)
         {
-            if (!m_positionGenerated)
+            if (!m_debugPositionGenerated)
             {
                 GeneratePositions();
             }
 
-            foreach (Vector2 position in m_grassChunksPositions)
+            foreach (Vector2 position in m_generatedDebugPositions)
             {
-                Vector3 origin = new Vector3(position.x, 200f, position.y);
+                Vector3 randomOffset = new Vector3(Random.Range(-1.75f, 1.75f), 0f, Random.Range(-1.75f, 1.75f));
+                Vector3 origin = new Vector3(position.x, 200f, position.y) + randomOffset;
+
                 Ray ray = new Ray(origin, Vector3.down);
                 RaycastHit hitInfo;
-                int layerMask = ~LayerMask.NameToLayer("Terrain");
-
-                if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity, layerMask))
+                
+                if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity, ~LayerMask.NameToLayer("Terrain")))
                 {
+                    // Get height corresponding to the generated x / z position
                     Vector3 newPosition = hitInfo.point;
                     Vector3 hitNormal = hitInfo.normal;
 
                     float slopeAngle = Vector3.Angle(Vector3.up, hitNormal);
 
+                    // Filter out position below minimum height / slope angle
                     if (newPosition.y > m_minHeight && Mathf.Abs(slopeAngle) <= maxAngle)
                     {
-                        Gizmos.color = Color.green;
-                        Gizmos.DrawSphere(newPosition, 1f);
+                        DrawPointGizmos(newPosition);
                     }
                 }
             }

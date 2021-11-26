@@ -25,7 +25,7 @@ public class GraphicsProfilerDisplay : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.D)) // Debug
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleCanvas();
         }

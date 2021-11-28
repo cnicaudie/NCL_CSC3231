@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour
 
     private void RotateCamera()
     {
-        if (IsMouseInScreen())
+        if (IsMouseInScreen() && !Input.GetKey(KeyCode.Space))
         {
             Vector3 mousePositionOffset = Input.mousePosition - m_mousePosition;
             Vector3 nextCameraAngle = new Vector3(-mousePositionOffset.y, mousePositionOffset.x, 0f);

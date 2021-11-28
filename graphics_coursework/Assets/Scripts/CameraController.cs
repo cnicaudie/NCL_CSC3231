@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -37,15 +38,18 @@ public class CameraController : MonoBehaviour
 
     private void RotateCamera()
     {
-        Vector3 mousePositionOffset = Input.mousePosition - m_mousePosition;
-        Vector3 nextCameraAngle = new Vector3(-mousePositionOffset.y, mousePositionOffset.x, 0f);
+        if (IsMouseInScreen())
+        {
+            Vector3 mousePositionOffset = Input.mousePosition - m_mousePosition;
+            Vector3 nextCameraAngle = new Vector3(-mousePositionOffset.y, mousePositionOffset.x, 0f);
 
-        nextCameraAngle.x += transform.eulerAngles.x;
-        nextCameraAngle.y += transform.eulerAngles.y;
+            nextCameraAngle.x += transform.eulerAngles.x;
+            nextCameraAngle.y += transform.eulerAngles.y;
 
-        transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, nextCameraAngle, sensitivity);
+            transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, nextCameraAngle, sensitivity);
 
-        m_mousePosition = Input.mousePosition;
+            m_mousePosition = Input.mousePosition;
+        }
     }
 
     private void TranslateCamera()
@@ -53,5 +57,32 @@ public class CameraController : MonoBehaviour
         Vector3 cameraDirection = new Vector3(m_horizontalInput, 0f, m_verticalInput);
 
         transform.Translate(speed * cameraDirection * Time.deltaTime);
+    }
+
+    private bool IsMouseInScreen()
+    {
+        Vector3 mousePosition = Input.mousePosition;
+
+        if (mousePosition.x <= 0 || mousePosition.y <= 0)
+        {
+            return false;
+        }
+#if UNITY_EDITOR
+        else if (mousePosition.x >= Handles.GetMainGameViewSize().x - 1
+                || mousePosition.y >= Handles.GetMainGameViewSize().y - 1)
+        {
+            return false;
+        }
+#else
+        else if (mousePosition.x >= Screen.width - 1
+                || mousePosition.y >= Screen.height - 1)
+        {
+            return false;
+        }
+#endif
+        else
+        {
+            return true;
+        }
     }
 }

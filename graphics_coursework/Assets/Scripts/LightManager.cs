@@ -4,16 +4,19 @@ using UnityEngine;
 [RequireComponent(typeof(Light))]
 public class LightManager : MonoBehaviour
 {
+    public Gradient skyColor;
     public Gradient ambientColor;
     public Gradient lightColor;
     public Gradient fogColor;
     public AnimationCurve intensityCurve;
 
+    public Material skybox;
+
     public enum TimeBase { HOURS, MINUTES, SECONDS }
     public TimeBase timeBase;
 
     private Light m_sunLight;
-    private const float k_maxIntensity = 0.7f;
+    private const float k_maxIntensity = 0.8f;
     private const float k_maxHoursInDay = 24f;
 
     [SerializeField, Range(0, k_maxHoursInDay)] private float m_timeOfDay;
@@ -37,6 +40,8 @@ public class LightManager : MonoBehaviour
                 m_timeSpeed = 1;
                 break;
         }
+
+        RenderSettings.skybox = skybox;
     }
 
     private void Update()
@@ -52,8 +57,14 @@ public class LightManager : MonoBehaviour
 
     private void UpdateLighting(float timePercent)
     {
-        RenderSettings.ambientLight = ambientColor.Evaluate(timePercent);
+        Color currentAmbientColor = ambientColor.Evaluate(timePercent);
+
+        RenderSettings.ambientLight = currentAmbientColor;
+        skybox.SetColor("HorizonColor", currentAmbientColor);
+
         RenderSettings.fogColor = fogColor.Evaluate(timePercent);
+
+        skybox.SetColor("SkyColor", skyColor.Evaluate(timePercent));
 
         m_sunLight.color = lightColor.Evaluate(timePercent);
         m_sunLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));

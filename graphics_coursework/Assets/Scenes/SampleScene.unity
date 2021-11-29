@@ -14,13 +14,13 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.914708, g: 0.77647626, b: 0.3970741, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.6784314, g: 0.6784314, b: 0.6784314, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.002
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.9147037, g: 0.77646494, b: 0.39704362, a: 1}
+  m_AmbientSkyColor: {r: 0.08156817, g: 0.11596872, b: 0.3679245, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 0.5
@@ -789,8 +789,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.9218116, g: 0.79509234, b: 0.44728863, a: 1}
-  m_Intensity: 0.6134166
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Intensity: 0
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
@@ -847,7 +847,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: -0.0068381634, y: 0.99312377, z: 0.07816051, w: 0.08688713}
+  m_LocalRotation: {x: -0.061628457, y: 0.70441604, z: 0.70441604, w: 0.061628457}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -956,11 +956,11 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   fogColor:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0.6784314, g: 0.6784314, b: 0.6784314, a: 1}
     key1: {r: 0.8862745, g: 0.7019608, b: 0.19607843, a: 1}
     key2: {r: 0.19001423, g: 0.24473467, b: 0.6603774, a: 0}
     key3: {r: 0.8862745, g: 0.7019608, b: 0.19607843, a: 0}
-    key4: {r: 1, g: 1, b: 1, a: 0}
+    key4: {r: 0.6784314, g: 0.6784314, b: 0.6784314, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
@@ -1036,7 +1036,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   skybox: {fileID: 2100000, guid: a0b9196b36eba4dd694beb25a466c9fd, type: 2}
   timeBase: 1
-  m_timeOfDay: 5.4
+  m_timeOfDay: 0
   m_timeSpeed: 60
 --- !u!1001 &736227241
 PrefabInstance:

@@ -15,12 +15,12 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.6784314, g: 0.6784314, b: 0.6784314, a: 1}
+  m_FogColor: {r: 0.48014927, g: 0.435263, b: 0.46690178, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.002
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.08156817, g: 0.11596872, b: 0.3679245, a: 1}
+  m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 0.5
@@ -789,8 +789,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_Intensity: 0
+  m_Color: {r: 0.976305, g: 0.9379028, b: 0.832501, a: 1}
+  m_Intensity: 0.795488
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
@@ -847,7 +847,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: -0.061628457, y: 0.70441604, z: 0.70441604, w: 0.061628457}
+  m_LocalRotation: {x: 0.0435779, y: 0.86272997, z: -0.49809733, w: 0.07547914}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1036,7 +1036,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   skybox: {fileID: 2100000, guid: a0b9196b36eba4dd694beb25a466c9fd, type: 2}
   timeBase: 1
-  m_timeOfDay: 0
+  m_timeOfDay: 10
   m_timeSpeed: 60
 --- !u!1001 &736227241
 PrefabInstance:
@@ -1687,13 +1687,14 @@ GameObject:
   - component: {fileID: 1403626586}
   - component: {fileID: 1403626585}
   - component: {fileID: 1403626589}
+  - component: {fileID: 1403626590}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1403626585
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1765,8 +1766,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1403626584}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 437, y: 100, z: 411.1}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalPosition: {x: 490, y: 6.6, z: 630}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
@@ -1787,6 +1788,26 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1403626590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1403626584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e751b4eab1a9e490cbaa031cd7829c52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floaters:
+  - {fileID: 1403626588}
+  water: {fileID: 1488578582}
+  underwaterDrag: 4
+  underwaterAngularDrag: 1
+  defaultDrag: 0
+  defaultAngularDrag: 0.05
+  floatingForce: 100
 --- !u!1001 &1408446089
 PrefabInstance:
   m_ObjectHideFlags: 0

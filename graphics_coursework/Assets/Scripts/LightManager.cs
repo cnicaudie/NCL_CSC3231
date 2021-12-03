@@ -16,7 +16,7 @@ public class LightManager : MonoBehaviour
     public TimeBase timeBase;
 
     private Light m_sunLight;
-    private const float k_maxIntensity = 0.8f;
+    private const float k_maxIntensity = 0.7f;
     private const float k_maxHoursInDay = 24f;
 
     [SerializeField, Range(0, k_maxHoursInDay)] private float m_timeOfDay;

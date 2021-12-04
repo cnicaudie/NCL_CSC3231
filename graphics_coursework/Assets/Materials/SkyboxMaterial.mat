@@ -52,6 +52,6 @@ Material:
     - _Blend: 0.5
     m_Colors:
     - GroundColor: {r: 0.0987346, g: 0.09603061, b: 0.24528301, a: 0}
-    - HorizonColor: {r: 0.3280095, g: 0.2954288, b: 0.31529665, a: 1}
-    - SkyColor: {r: 0.0012009805, g: 0.11438726, b: 0.3106618, a: 1}
+    - HorizonColor: {r: 0.9606756, g: 0.89694303, b: 0.72201735, a: 1}
+    - SkyColor: {r: 0.0022965507, g: 0.25707626, b: 0.6967, a: 1}
   m_BuildTextureStacks: []

@@ -24,6 +24,10 @@ public class LightManager : MonoBehaviour
 
     // ==================================
 
+    // ==================================
+    // PRIVATE METHODS
+    // ==================================
+
     private void Start()
     {
         m_sunLight = GetComponent<Light>();

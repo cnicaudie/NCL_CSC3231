@@ -39,7 +39,6 @@ public class GraphicsProfilerDisplay : MonoBehaviour
         canvas.SetActive(displayStats && !canvas.activeSelf);
     }
 
-    // Note : Around 20/25 FPS is ok
     private void UpdateFPS()
     {
         m_deltaTime += (Time.deltaTime - m_deltaTime) * 0.1f;

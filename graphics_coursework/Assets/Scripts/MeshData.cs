@@ -14,6 +14,10 @@ public class MeshData
 
     // ==================================
 
+    // ==================================
+    // PUBLIC METHODS
+    // ==================================
+
     public MeshData(int meshWidth, int meshDepth)
     {
         int nbVertices = meshWidth * meshDepth;
